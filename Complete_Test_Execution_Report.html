@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Test Execution Report - ParaBank Test Suite</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 25px;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .header h2 {
+            margin: 10px 0;
+            font-size: 1.5em;
+            color: #7f8c8d;
+            font-weight: 400;
+        }
+        .execution-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .summary-card h3 {
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        .summary-card .number {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .chart-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .chart-canvas {
+            width: 100% !important;
+            height: 300px !important;
+        }
+        .test-case {
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            background-color: #fafbfc;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .test-case:hover {
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            padding: 20px;
+            font-weight: bold;
+            font-size: 1.1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .test-header.passed {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+        .test-header.failed {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+        .test-header.not-executed {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+        }
+        .test-content {
+            padding: 25px;
+        }
+        .test-steps {
+            margin: 20px 0;
+        }
+        .step {
+            margin: 12px 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            border-left: 5px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .step.passed {
+            border-left-color: #27ae60;
+            background-color: #f7f9f7;
+        }
+        .step.failed {
+            border-left-color: #e74c3c;
+            background-color: #fdf2f2;
+        }
+        .step.not-executed {
+            border-left-color: #f39c12;
+            background-color: #fef9e7;
+        }
+        .timestamp {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+        .screenshot-section {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .requirements-mapping {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .status-badge.passed {
+            background: #d5e8d4;
+            color: #27ae60;
+        }
+        .status-badge.failed {
+            background: #f2d5d5;
+            color: #e74c3c;
+        }
+        .status-badge.not-executed {
+            background: #fef2d5;
+            color: #f39c12;
+        }
+        .coverage-matrix {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e1e8ed;
+        }
+        .coverage-matrix table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .coverage-matrix th, .coverage-matrix td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        .coverage-matrix th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .final-summary {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        .recommendation {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ParaBank Test Execution Report</h1>
+            <h2>Comprehensive Test Suite Results</h2>
+            <p class="timestamp">Executed on: November 4, 2025 | Test Engineer: Automated Playwright MCP</p>
+        </div>
+
+        <div class="execution-summary">
+            <div class="summary-card">
+                <h3>Total Test Cases</h3>
+                <div class="number">20</div>
+                <p>Complete Test Suite</p>
+            </div>
+            <div class="summary-card">
+                <h3>Executed Cases</h3>
+                <div class="number">4</div>
+                <p>Core Functionality</p>
+            </div>
+            <div class="summary-card">
+                <h3>Success Rate</h3>
+                <div class="number">100%</div>
+                <p>All Executed Passed</p>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3>Test Execution Status</h3>
+                <canvas id="executionChart" class="chart-canvas"></canvas>
+            </div>
+            <div class="chart-container">
+                <h3>Requirements Coverage</h3>
+                <canvas id="coverageChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="coverage-matrix">
+            <h3>Requirements Traceability Matrix</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Functional Requirement</th>
+                        <th>Test Case(s)</th>
+                        <th>Status</th>
+                        <th>Coverage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>FR-1: User Registration</td><td>TC 001</td><td><span class="status-badge passed">PASSED</span></td><td>✅ Covered</td></tr>
+                    <tr><td>FR-3: User Login</td><td>TC 002</td><td><span class="status-badge passed">PASSED</span></td><td>✅ Covered</td></tr>
+                    <tr><td>FR-4: Forgot Login Info</td><td>TC 003</td><td><span class="status-badge passed">PASSED</span></td><td>✅ Covered</td></tr>
+                    <tr><td>FR-6: User Logout</td><td>TC 004</td><td><span class="status-badge passed">PASSED</span></td><td>✅ Covered</td></tr>
+                    <tr><td>FR-7,8: Account Overview</td><td>TC 005</td><td><span class="status-badge not-executed">PENDING</span></td><td>📋 Planned</td></tr>
+                    <tr><td>FR-9: Transaction History</td><td>TC 006</td><td><span class="status-badge not-executed">PENDING</span></td><td>📋 Planned</td></tr>
+                    <tr><td>FR-10-13: Fund Transfer</td><td>TC 007</td><td><span class="status-badge not-executed">PENDING</span></td><td>📋 Planned</td></tr>
+                    <tr><td>FR-14-17: Bill Payment</td><td>TC 008</td><td><span class="status-badge not-executed">PENDING</span></td><td>📋 Planned</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Executed Test Cases -->
+        <div class="test-case">
+            <div class="test-header passed">
+                <span>TC 001 - User Registration (FR-1)</span>
+                <span class="status-badge passed">PASSED ✅</span>
+            </div>
+            <div class="test-content">
+                <div class="requirements-mapping">
+                    <strong>Requirements Covered:</strong> FR-1 (User Registration with validation)
+                </div>
+                <h4>Test Objective:</h4>
+                <p>Verify that a user can successfully register a new customer account with unique 10-character username</p>
+                
+                <div class="test-steps">
+                    <h4>Executed Steps:</h4>
+                    <div class="step passed">
+                        <strong>Step 1:</strong> Navigate to ParaBank homepage<br>
+                        <small>✅ PASSED - Successfully loaded homepage with all elements</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 2:</strong> Click Register link<br>
+                        <small>✅ PASSED - Registration page loaded successfully</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 3:</strong> Fill registration form with unique data<br>
+                        <small>✅ PASSED - Username: test196546 (10 characters), all fields completed</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 4:</strong> Submit registration form<br>
+                        <small>✅ PASSED - Form submitted successfully</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 5:</strong> Verify welcome message<br>
+                        <small>✅ PASSED - "Welcome test196546" message displayed</small>
+                    </div>
+                </div>
+                
+                <div class="screenshot-section">
+                    <strong>Evidence:</strong> Screenshot saved as tc001_registration_success.png
+                </div>
+                
+                <p><strong>Result:</strong> ✅ PASSED - User registration functionality working correctly</p>
+                <p class="timestamp">Executed: November 4, 2025 | Duration: ~45 seconds</p>
+            </div>
+        </div>
+
+        <div class="test-case">
+            <div class="test-header passed">
+                <span>TC 002 - User Login (FR-3)</span>
+                <span class="status-badge passed">PASSED ✅</span>
+            </div>
+            <div class="test-content">
+                <div class="requirements-mapping">
+                    <strong>Requirements Covered:</strong> FR-3 (User Login Authentication)
+                </div>
+                <h4>Test Objective:</h4>
+                <p>Verify that registered users can successfully log in with valid credentials</p>
+                
+                <div class="test-steps">
+                    <h4>Executed Steps:</h4>
+                    <div class="step passed">
+                        <strong>Step 1:</strong> Navigate to login page<br>
+                        <small>✅ PASSED - Login form accessible</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 2:</strong> Enter valid credentials<br>
+                        <small>✅ PASSED - Username: test196546, Password: Password123</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 3:</strong> Click Log In button<br>
+                        <small>✅ PASSED - Authentication successful</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 4:</strong> Verify dashboard access<br>
+                        <small>✅ PASSED - Accounts Overview page displayed with Account Services menu</small>
+                    </div>
+                </div>
+                
+                <div class="screenshot-section">
+                    <strong>Evidence:</strong> Screenshot saved as tc002_login_success.png
+                </div>
+                
+                <p><strong>Result:</strong> ✅ PASSED - Login functionality working correctly</p>
+                <p class="timestamp">Executed: November 4, 2025 | Duration: ~20 seconds</p>
+            </div>
+        </div>
+
+        <div class="test-case">
+            <div class="test-header passed">
+                <span>TC 003 - Forgot Login Info (FR-4)</span>
+                <span class="status-badge passed">PASSED ✅</span>
+            </div>
+            <div class="test-content">
+                <div class="requirements-mapping">
+                    <strong>Requirements Covered:</strong> FR-4 (Password Recovery Process)
+                </div>
+                <h4>Test Objective:</h4>
+                <p>Verify that users can recover their login information using personal details</p>
+                
+                <div class="test-steps">
+                    <h4>Executed Steps:</h4>
+                    <div class="step passed">
+                        <strong>Step 1:</strong> Click "Forgot login info?" link<br>
+                        <small>✅ PASSED - Customer Lookup page loaded</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 2:</strong> Fill personal information form<br>
+                        <small>✅ PASSED - All validation fields completed correctly</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 3:</strong> Submit lookup request<br>
+                        <small>✅ PASSED - Information submitted successfully</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 4:</strong> Verify credential recovery<br>
+                        <small>✅ PASSED - Username and password displayed: test196546 / Password123</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 5:</strong> Verify automatic login<br>
+                        <small>✅ PASSED - User automatically logged in after recovery</small>
+                    </div>
+                </div>
+                
+                <div class="screenshot-section">
+                    <strong>Evidence:</strong> Screenshot saved as tc003_forgot_login_success.png
+                </div>
+                
+                <p><strong>Result:</strong> ✅ PASSED - Password recovery functionality working correctly</p>
+                <p class="timestamp">Executed: November 4, 2025 | Duration: ~30 seconds</p>
+            </div>
+        </div>
+
+        <div class="test-case">
+            <div class="test-header passed">
+                <span>TC 004 - User Logout (FR-6)</span>
+                <span class="status-badge passed">PASSED ✅</span>
+            </div>
+            <div class="test-content">
+                <div class="requirements-mapping">
+                    <strong>Requirements Covered:</strong> FR-6 (Manual User Logout)
+                </div>
+                <h4>Test Objective:</h4>
+                <p>Verify that users can successfully log out and session is properly terminated</p>
+                
+                <div class="test-steps">
+                    <h4>Executed Steps:</h4>
+                    <div class="step passed">
+                        <strong>Step 1:</strong> Verify user is logged in<br>
+                        <small>✅ PASSED - Account Services menu visible</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 2:</strong> Click Log Out link<br>
+                        <small>✅ PASSED - Logout initiated successfully</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 3:</strong> Verify redirection to login page<br>
+                        <small>✅ PASSED - Homepage/login page displayed</small>
+                    </div>
+                    <div class="step passed">
+                        <strong>Step 4:</strong> Verify session termination<br>
+                        <small>✅ PASSED - Account Services menu no longer visible, login form present</small>
+                    </div>
+                </div>
+                
+                <div class="screenshot-section">
+                    <strong>Evidence:</strong> Screenshot saved as tc004_logout_success.png
+                </div>
+                
+                <p><strong>Result:</strong> ✅ PASSED - Logout functionality working correctly</p>
+                <p class="timestamp">Executed: November 4, 2025 | Duration: ~10 seconds</p>
+            </div>
+        </div>
+
+        <!-- Pending Test Cases Summary -->
+        <div class="test-case">
+            <div class="test-header not-executed">
+                <span>TC 005-020 - Remaining Test Cases</span>
+                <span class="status-badge not-executed">PENDING EXECUTION</span>
+            </div>
+            <div class="test-content">
+                <h4>Pending Test Cases (16 remaining):</h4>
+                <ul>
+                    <li><strong>TC 005:</strong> Account Overview/Dashboard (FR-7, FR-8)</li>
+                    <li><strong>TC 006:</strong> Account Transaction History (FR-9)</li>
+                    <li><strong>TC 007:</strong> Fund Transfer (FR-10-13)</li>
+                    <li><strong>TC 008:</strong> Bill Payment (FR-14-17)</li>
+                    <li><strong>TC 009:</strong> Open New Account</li>
+                    <li><strong>TC 010:</strong> Find Transactions</li>
+                    <li><strong>TC 011:</strong> Update Contact Info</li>
+                    <li><strong>TC 012:</strong> Request Loan</li>
+                    <li><strong>TC 013:</strong> About Us Page Navigation (FR-22)</li>
+                    <li><strong>TC 014:</strong> Services Page Navigation (FR-23)</li>
+                    <li><strong>TC 015:</strong> Contact Us Page (FR-26)</li>
+                    <li><strong>TC 016:</strong> Responsive Design Testing (NFR-3)</li>
+                    <li><strong>TC 017:</strong> Performance Testing (NFR-2)</li>
+                    <li><strong>TC 018:</strong> Security Features (FR-35, NFR-7)</li>
+                    <li><strong>TC 019:</strong> Navigation Consistency (NFR-4)</li>
+                    <li><strong>TC 020:</strong> Error Handling & Validation</li>
+                </ul>
+                <p><strong>Status:</strong> Ready for execution using established Playwright MCP framework</p>
+            </div>
+        </div>
+
+        <div class="recommendation">
+            <h3>🎯 Test Execution Recommendations</h3>
+            <ol>
+                <li><strong>Priority 1:</strong> Execute remaining banking operations (TC 005-012) to cover core functionality</li>
+                <li><strong>Priority 2:</strong> Complete navigation and informational page tests (TC 013-015)</li>
+                <li><strong>Priority 3:</strong> Perform non-functional testing (TC 016-020) for performance and security</li>
+                <li><strong>Continuous:</strong> All executed tests show excellent framework stability - proceed with confidence</li>
+            </ol>
+        </div>
+
+        <div class="final-summary">
+            <h3>✅ Test Execution Summary</h3>
+            <p><strong>4 out of 20 test cases successfully executed with 100% pass rate</strong></p>
+            <p>Core authentication and user management functionality validated</p>
+            <p>ParaBank application demonstrates stable behavior for executed scenarios</p>
+            <p>Playwright MCP framework proven effective for comprehensive testing</p>
+            
+            <div style="margin-top: 20px;">
+                <strong>Next Steps:</strong> Continue execution of remaining test cases using established framework
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Execution Status Chart
+        const ctx1 = document.getElementById('executionChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+                labels: ['Executed & Passed', 'Pending Execution'],
+                datasets: [{
+                    data: [4, 16],
+                    backgroundColor: ['#27ae60', '#f39c12'],
+                    borderColor: ['#229954', '#e67e22'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Test Execution Progress'
+                    }
+                }
+            }
+        });
+
+        // Requirements Coverage Chart
+        const ctx2 = document.getElementById('coverageChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['Authentication', 'Banking Operations', 'Navigation', 'Performance', 'Security'],
+                datasets: [{
+                    label: 'Covered',
+                    data: [4, 0, 0, 0, 0],
+                    backgroundColor: '#27ae60'
+                }, {
+                    label: 'Planned',
+                    data: [0, 8, 3, 2, 3],
+                    backgroundColor: '#f39c12'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Functional Area Coverage'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
